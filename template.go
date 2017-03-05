@@ -1,6 +1,7 @@
 package kindlepush
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,10 +12,8 @@ import (
 	"text/template"
 	"time"
 
-	"bytes"
-
 	"github.com/antchfx/xquery/html"
-	"github.com/zhengchun/go-objectid"
+	"github.com/zhengchun/objectid"
 	"golang.org/x/net/html"
 	"golang.org/x/text/encoding/unicode"
 )

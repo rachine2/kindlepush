@@ -13,7 +13,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/go-gomail/gomail"
-	objectid "github.com/zhengchun/go-objectid"
+	"github.com/zhengchun/objectid"
 )
 
 type Server struct {
