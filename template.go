@@ -3,7 +3,10 @@ package kindlepush
 import (
 	"bytes"
 	"fmt"
-	"io"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +16,7 @@ import (
 	"time"
 
 	"github.com/antchfx/xquery/html"
+	"github.com/nfnt/resize"
 	"github.com/zhengchun/objectid"
 	"golang.org/x/net/html"
 	"golang.org/x/text/encoding/unicode"
@@ -169,29 +173,54 @@ var client = &http.Client{
 }
 
 func downloadImage(link string) (*fileInfo, error) {
+	fmt.Println(link)
 	resp, err := client.Get(link)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	name := objectid.New().String()
-	typ := resp.Header.Get("Content-Type")
-	switch typ {
-	case "image/gif":
-		name += ".gif"
-	case "image/png":
-		name += ".png"
-	default:
-		name += ".jpeg"
+	// resize image
+	img, typ, err := image.Decode(resp.Body)
+	if err != nil {
+		return nil, err
 	}
 
+	const (
+		maxWidth  = uint(500)
+		maxHeight = uint(600)
+	)
+	img = resize.Thumbnail(maxWidth, maxHeight, img, resize.NearestNeighbor)
+
+	ext := ".jpg"
+	switch typ {
+	case "gif":
+		ext = ".gif"
+	case "png":
+		ext = ".png"
+	}
+
+	name := objectid.New().String() + ext
 	f, err := os.Create(filepath.Join(os.TempDir(), name))
 	if err != nil {
 		return nil, err
 	}
-	io.Copy(f, resp.Body)
 	defer f.Close()
+
+	switch typ {
+	case "gif":
+		if err := gif.Encode(f, img, &gif.Options{NumColors: 256}); err != nil {
+			return nil, err
+		}
+	case "png":
+		if err := png.Encode(f, img); err != nil {
+			return nil, err
+		}
+	default: // jpeg or other types
+		if err := jpeg.Encode(f, img, &jpeg.Options{Quality: jpeg.DefaultQuality}); err != nil {
+			return nil, err
+		}
+	}
 
 	return &fileInfo{
 		id:   sequence(),
