@@ -78,60 +78,55 @@ func createHtmlFile(post *Post) (htmlFile *fileInfo, imageFiles []*fileInfo) {
 	}
 	body := htmlquery.FindOne(doc, "//body")
 	// iteration all elements of HTML document.
-	var fn func(*bytes.Buffer, *html.Node, bool)
-	fn = func(buf *bytes.Buffer, n *html.Node, includeSelf bool) {
-		if n == nil {
-			return
-		}
-		if n.Type == html.TextNode || n.Type == html.CommentNode {
+	var fn func(*bytes.Buffer, *html.Node)
+	fn = func(buf *bytes.Buffer, n *html.Node) {
+		if n.Type == html.TextNode {
 			buf.WriteString(strings.TrimSpace(n.Data))
 			return
 		}
-		if ok := allowedTags[n.Data]; !ok {
+		if n.Type == html.CommentNode || !allowedTags[n.Data] {
 			return
 		}
 
 		selfClosing := isSelfClosingTag(n.Data)
-		if includeSelf {
-			buf.WriteString("<" + n.Data)
-			for _, attr := range n.Attr {
-				if ok := allowedAttrs[attr.Key]; ok {
-					val := attr.Val
 
-					// If an element is `src` element that means need
-					// download this image from remote server.
-					if n.Data == "img" && attr.Key == "src" {
-						if f, err := downloadImage(val); err == nil {
-							imageFiles = append(imageFiles, f)
-							val = f.name
-						}
-					}
+		buf.WriteString("<" + n.Data)
+		for _, attr := range n.Attr {
+			if ok := allowedAttrs[attr.Key]; ok {
+				val := attr.Val
 
-					if val != "" {
-						buf.WriteString(fmt.Sprintf(` %s="%s"`, attr.Key, val))
+				// If an element is `src` element that means need
+				// download this image from remote server.
+				if n.Data == "img" && attr.Key == "src" {
+					if f, err := downloadImage(val); err == nil {
+						imageFiles = append(imageFiles, f)
+						val = f.name
 					}
 				}
-			}
 
-			if selfClosing {
-				buf.WriteString("/>")
-			} else {
-				buf.WriteString(">")
+				if val != "" {
+					buf.WriteString(fmt.Sprintf(` %s="%s"`, attr.Key, val))
+				}
 			}
+		}
+
+		if selfClosing {
+			buf.WriteString("/>")
+		} else {
+			buf.WriteString(">")
 		}
 
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			fn(buf, child, true)
+			fn(buf, child)
 		}
-		if includeSelf {
-			if !selfClosing {
-				buf.WriteString(fmt.Sprintf("</%s>", n.Data))
-			}
+		if !selfClosing {
+			buf.WriteString(fmt.Sprintf("</%s>", n.Data))
 		}
-
 	}
 	var buf bytes.Buffer
-	fn(&buf, body, false)
+	for child := body.FirstChild; child != nil; child = child.NextSibling {
+		fn(&buf, child)
+	}
 
 	fname := filepath.Join(os.TempDir(), fmt.Sprintf("%s.html", objectid.New()))
 	if f, err := os.Create(fname); err == nil {
