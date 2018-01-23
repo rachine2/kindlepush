@@ -58,7 +58,7 @@ func fetch(link string) string {
 		logrus.Warnf("techcrunch fetching body %s got error: %v", link, err)
 	} else {
 		if elem := htmlquery.FindOne(doc, "//div[@class='article-entry text']"); elem != nil {
-			return htmlquery.OutputHTML(elem)
+			return htmlquery.OutputHTML(elem, true)
 		}
 	}
 	return ""

@@ -51,7 +51,7 @@ func fetchBody(link string) string {
 		logrus.Warnf("engadget_cn fetching body %s got error: %v", link, err)
 	} else {
 		if elem := htmlquery.FindOne(doc, "//div[@class='flush-top flush-bottom']"); elem != nil {
-			return htmlquery.OutputHTML(elem)
+			return htmlquery.OutputHTML(elem, true)
 		}
 	}
 	return ""
