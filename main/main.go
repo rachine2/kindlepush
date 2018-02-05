@@ -11,6 +11,8 @@ import (
 	_ "github.com/zhengchun/kindlepush/plugins/engadget"
 	_ "github.com/zhengchun/kindlepush/plugins/techcrunch"
 	_ "github.com/zhengchun/kindlepush/plugins/zhihu"
+	_ "github.com/zhengchun/kindlepush/plugins/nyt"
+	_ "github.com/zhengchun/kindlepush/plugins/cnbeta"
 )
 
 func config() kindlepush.Config {
