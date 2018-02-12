@@ -8,11 +8,15 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/zhengchun/kindlepush"
 	_ "github.com/zhengchun/kindlepush/plugins/blogs/dotnet"
+	_ "github.com/zhengchun/kindlepush/plugins/cnbeta"
 	_ "github.com/zhengchun/kindlepush/plugins/engadget"
+	_ "github.com/zhengchun/kindlepush/plugins/eth"
+	_ "github.com/zhengchun/kindlepush/plugins/ftc"
+	_ "github.com/zhengchun/kindlepush/plugins/nyt"
+	_ "github.com/zhengchun/kindlepush/plugins/rfa"
+	_ "github.com/zhengchun/kindlepush/plugins/t36kr"
 	_ "github.com/zhengchun/kindlepush/plugins/techcrunch"
 	_ "github.com/zhengchun/kindlepush/plugins/zhihu"
-	_ "github.com/zhengchun/kindlepush/plugins/nyt"
-	_ "github.com/zhengchun/kindlepush/plugins/cnbeta"
 )
 
 func config() kindlepush.Config {

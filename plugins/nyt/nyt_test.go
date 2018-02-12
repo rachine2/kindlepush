@@ -3,7 +3,8 @@ package nyt
 import "testing"
 
 func TestNytHandler(t *testing.T) {
-	posts, err := nytDailyHandler()
+	handler := nytDailyHandler(feed_cn)
+	posts, err := handler()
 	if err != nil {
 		t.Fatal(err)
 	}

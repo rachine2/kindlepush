@@ -21,15 +21,12 @@ func cnbetaDailyHandler() ([]*kindlepush.Post, error) {
 	dates := xmlquery.Find(doc, "//updated")
 
 	for i, _ := range summarys {
-		if dates[i] == nil {
-			break
-		}
-		if summarys[i] == nil {
+		if titles[i+1] == nil || dates[i] == nil || summarys[i] == nil {
 			break
 		}
 		post := &kindlepush.Post{
-			Title: 	titles[i+1].InnerText(),
-			Date:	dates[i].InnerText(),
+			Title:       titles[i+1].InnerText(),
+			Date:        dates[i].InnerText(),
 			Description: summarys[i].InnerText(),
 		}
 		post.Body = post.Description

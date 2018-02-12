@@ -32,8 +32,17 @@ RSS feeds
 ===
 |ID |Name |
 |--------------------------|----------------|
+|36kr | 36氪 (http://www.36kr.com)|
+|cnbeta | Cnbeta IT News (http://www.cnbeta.com)|
 |engadget_en | [Engadget](http://www.engadget.com/)|
 |engadget_cn | [Engadget 中文版](http://cn.engadget.com/)|
+|eth | Eth Fans (http://ethfans.org/) |
+|ftc | FT 中文版(http://www.ftchinese.com)|
+|nyt_bs | new york times business (https://nytimes.com/)|
+|nyt_cn | new york times cn (https://cn.nytimes.com/)|
+|nyt_us | new york times us (https://nytimes.com/)|
+|nyt_wld | new york times world (https://nytimes.com/)|
+|rfa | RFA (https://www.rfa.org)|
 |techcrunch_en | [Techcrunch](http://feeds.feedburner.com/)|
 |techcrunch_cn | [Techcrunch 中文版](http://techcrunch.cn)|
 |zhihu | [知乎每日精选](https://www.zhihu.com)|
