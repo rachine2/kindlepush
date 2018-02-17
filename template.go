@@ -7,6 +7,7 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -71,7 +72,7 @@ func sequence() string {
 	return fmt.Sprintf("%d", atomic.AddInt32(&seqNum, 1))
 }
 
-func createHtmlFile(post *Post) (htmlFile *fileInfo, imageFiles []*fileInfo) {
+func createHtmlFile(post *Post, htmlPath string, imageKeepSize bool) (htmlFile *fileInfo, imageFiles []*fileInfo) {
 	doc, err := html.Parse(strings.NewReader(post.Body))
 	if err != nil {
 		return
@@ -98,9 +99,18 @@ func createHtmlFile(post *Post) (htmlFile *fileInfo, imageFiles []*fileInfo) {
 				// If an element is `src` element that means need
 				// download this image from remote server.
 				if n.Data == "img" && attr.Key == "src" {
-					if f, err := downloadImage(val); err == nil {
+					f, err := downloadImage(val, imageKeepSize)
+					if err == nil {
 						imageFiles = append(imageFiles, f)
 						val = f.name
+					}
+
+					if err != nil && len(htmlPath) > 0 {
+						f, err = locateImage(val, htmlPath, imageKeepSize)
+						if err == nil {
+							imageFiles = append(imageFiles, f)
+							val = f.name
+						}
 					}
 				}
 
@@ -167,7 +177,19 @@ var client = &http.Client{
 	Timeout: 15 * time.Second,
 }
 
-func downloadImage(link string) (*fileInfo, error) {
+func locateImage(fileName string, htmlPath string, imageKeepSize bool) (*fileInfo, error) {
+	realFile := htmlPath + string(os.PathSeparator) + fileName
+	if _, err := os.Stat(realFile); err != nil {
+		return nil, err
+	}
+	fp, err := os.Open(realFile)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+	return adjustImage(fp, imageKeepSize)
+}
+func downloadImage(link string, imageKeepSize bool) (*fileInfo, error) {
 	fmt.Println(link)
 	resp, err := client.Get(link)
 	if err != nil {
@@ -175,17 +197,23 @@ func downloadImage(link string) (*fileInfo, error) {
 	}
 	defer resp.Body.Close()
 
+	return adjustImage(resp.Body, imageKeepSize)
+}
+
+func adjustImage(r io.Reader, imageKeepSize bool) (*fileInfo, error) {
 	// resize image
-	img, typ, err := image.Decode(resp.Body)
+	img, typ, err := image.Decode(r)
 	if err != nil {
 		return nil, err
 	}
 
-	const (
-		maxWidth  = uint(500)
-		maxHeight = uint(600)
-	)
-	img = resize.Thumbnail(maxWidth, maxHeight, img, resize.NearestNeighbor)
+	if imageKeepSize == false {
+		const (
+			maxWidth  = uint(500)
+			maxHeight = uint(600)
+		)
+		img = resize.Thumbnail(maxWidth, maxHeight, img, resize.NearestNeighbor)
+	}
 
 	ext := ".jpg"
 	switch typ {

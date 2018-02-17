@@ -27,7 +27,9 @@ func config() kindlepush.Config {
 		subscribes string
 		debug      bool
 
-		from, username, password, smtp string
+		from, username, password, smtp, htmlpath string
+		sizelimit                                int64
+		imgkeepsize                              bool
 	)
 	flag.IntVar(&maxnum, "max-number", 25, "the maximum number of items to fetch.")
 	flag.StringVar(&kindleAddr, "kindle", "", "the kindle email address.")
@@ -36,6 +38,9 @@ func config() kindlepush.Config {
 	flag.StringVar(&username, "email-username", "", "your email account name.")
 	flag.StringVar(&password, "email-password", "", "your email account password.")
 	flag.StringVar(&smtp, "email-smtp", "", "your email SMTP address.")
+	flag.StringVar(&htmlpath, "html-path", "", "Push all html files under path.")
+	flag.Int64Var(&sizelimit, "size-limit", 20, "Size limit in MBytes of mail server.")
+	flag.BoolVar(&imgkeepsize, "imgkeepsize", false, "Keep image original size")
 	flag.BoolVar(&debug, "debug", false, "")
 
 	flag.Parse()
@@ -51,12 +56,15 @@ func config() kindlepush.Config {
 			Password: password,
 			SMTP:     smtp,
 		},
+		Htmlpath:      htmlpath,
+		SizeLimit:     sizelimit * 1024 * 1024,
+		ImageKeepSize: imgkeepsize,
 	}
 	return config
 }
 
 func checkConfig(config kindlepush.Config) error {
-	if len(config.Subscribes) == 0 {
+	if (len(config.Subscribes) == 0) && (len(config.Htmlpath) == 0) {
 		return errors.New("--subscribes is nil")
 	}
 	if config.KindleAddr == "" {

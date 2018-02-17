@@ -26,6 +26,14 @@ command line options:
 
 - email-smtp=smtp.xx.xx:25 : the email SMTP address with port number.
 
+- email-password=xx : your email account password.
+
+- html-path=xx : Push all html files under path.
+
+- size-limit=xx : Size limit of mail server.
+
+- imgkeepsize : Keep image original size
+
 **KindlePush use your email account to send eBook to your kindle device address on the client, it's safe.**
 
 RSS feeds
