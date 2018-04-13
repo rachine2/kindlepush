@@ -34,7 +34,6 @@ func rfaHandler() ([]*kindlepush.Post, error) {
 			Date:  dates[i-1].InnerText(),
 		}
 		post.Body = fetch(post.Link)
-		fmt.Println(post.Body)
 		posts = append(posts, post)
 	}
 
