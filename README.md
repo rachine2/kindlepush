@@ -41,6 +41,7 @@ RSS feeds
 |ID |Name |
 |--------------------------|----------------|
 |36kr | [36氪](http://www.36kr.com)|
+|cl Tech | [1024 Tech Forum](http://feeds.feedburner.com/cl-jstlq) |
 |cnbeta | [Cnbeta IT News](http://www.cnbeta.com)|
 |engadget_en | [Engadget](http://www.engadget.com/)|
 |engadget_cn | [Engadget 中文版](http://cn.engadget.com/)|

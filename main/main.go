@@ -8,6 +8,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/zhengchun/kindlepush"
 	_ "github.com/zhengchun/kindlepush/plugins/blogs/dotnet"
+	_ "github.com/zhengchun/kindlepush/plugins/cltech"
 	_ "github.com/zhengchun/kindlepush/plugins/cnbeta"
 	_ "github.com/zhengchun/kindlepush/plugins/engadget"
 	_ "github.com/zhengchun/kindlepush/plugins/eth"

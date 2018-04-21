@@ -1,7 +1,6 @@
 package rfa
 
 import (
-	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/antchfx/xquery/html"
 	"github.com/antchfx/xquery/xml"
